@@ -15,7 +15,7 @@ from pages.login_page import LoginPage
         # Invalid username and password combinations: login should fail
         ("wrong_user", "wrong_pass", "failure"),
         ("omernaeem16@gmail.com", "wrong_pass", "failure"),
-        ("wrong_user", "wrong_pass", "failure"),
+        ("wrong_user", os.getenv("QA_PASSWORD"), "failure"),
     ],
 )
 def test_login(page, username, password, expected):
