@@ -27,4 +27,7 @@ jobs:
           playwright install --with-deps chromium
 
       - name: Run Playwright tests
+        env:
+          QA_USERNAME: ${{ secrets.QA_USERNAME }}
+          QA_PASSWORD: ${{ secrets.QA_PASSWORD }}
         run: pytest
