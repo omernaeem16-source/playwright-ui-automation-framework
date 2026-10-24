@@ -1,3 +1,4 @@
+
 import os
 
 from playwright.sync_api import expect
@@ -22,26 +23,26 @@ def test_remove_product_from_cart(page):
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
 
-    # Log in and verify successful navigation
+    # Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Open the Bluetooth Speaker product page
-    catalog_page.open_bluetooth_speaker()
+    # Open the in-stock Laptop Backpack product page
+    catalog_page.open_laptop_backpack()
 
     # Verify product details before adding it to the cart
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(product_page.product_price).to_have_text("$159.99")
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
+    expect(product_page.product_price).to_have_text("$49.99")
     expect(product_page.add_to_cart).to_be_visible()
 
     # Add the product and navigate to the cart
     product_page.add_to_cart_button()
     product_page.open_cart()
 
-    # Verify the product and its initial quantity
-    expect(cart_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(cart_page.product_price).to_have_text("$159.99")
+    # Verify the product details and initial quantity
+    expect(cart_page.product_name).to_have_text("Laptop Backpack")
+    expect(cart_page.product_price).to_have_text("$49.99")
     expect(cart_page.product_quantity).to_have_text("1")
 
     # Remove the product and verify that the cart becomes empty
@@ -65,16 +66,16 @@ def test_increase_product_quantity(page):
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
 
-    # Log in and verify successful navigation
+    # Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Open the Bluetooth Speaker product page
-    catalog_page.open_bluetooth_speaker()
+    # Open the in-stock Laptop Backpack product page
+    catalog_page.open_laptop_backpack()
 
-    # Add the product and open the cart
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
+    # Verify the product name, add it, and open the cart
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
     product_page.add_to_cart_button()
     product_page.open_cart()
 
@@ -100,14 +101,14 @@ def test_decrease_product_quantity(page):
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
 
-    # Log in and verify successful navigation
+    # Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Add the Bluetooth Speaker to the cart
-    catalog_page.open_bluetooth_speaker()
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
+    # Open the Laptop Backpack product page and add it to the cart
+    catalog_page.open_laptop_backpack()
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
     product_page.add_to_cart_button()
     product_page.open_cart()
 
@@ -134,25 +135,24 @@ def test_cart_subtotal_updates_when_quantity_increases(page):
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
 
-    # Log in and verify successful navigation
+    # Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Add the Bluetooth Speaker to the cart
-    catalog_page.open_bluetooth_speaker()
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
+    # Open the Laptop Backpack product page and add it to the cart
+    catalog_page.open_laptop_backpack()
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
     product_page.add_to_cart_button()
     product_page.open_cart()
 
     # Verify the initial quantity and subtotal
     expect(cart_page.product_quantity).to_have_text("1")
-    expect(cart_page.product_subtotal).to_have_text("$159.99")
+    expect(cart_page.product_subtotal).to_have_text("$49.99")
 
     # Increase quantity from 1 to 2
     cart_page.increase_qty()
 
-    # Verify that the subtotal doubles when quantity doubles
+    # Verify the quantity and updated subtotal
     expect(cart_page.product_quantity).to_have_text("2")
-    expect(cart_page.product_subtotal).to_have_text("$319.98")
-
+    expect(cart_page.product_subtotal).to_have_text("$99.98")

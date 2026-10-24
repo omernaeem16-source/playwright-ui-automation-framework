@@ -9,7 +9,7 @@ from pages.cart_page import CartPage
 from pages.check_out_page import CheckOutPage
 
 
-def test_bluetooth_speaker_product_flow(page):
+def test_laptop_backpack_product_flow(page):
     # Ensure login credentials are configured in the .env file
     username = os.getenv("QA_USERNAME")
     password = os.getenv("QA_PASSWORD")
@@ -29,20 +29,20 @@ def test_bluetooth_speaker_product_flow(page):
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Step 2: Open the Bluetooth Speaker product page
-    catalog_page.open_bluetooth_speaker()
+    # Step 2: Open the Laptop Backpack product page
+    catalog_page.open_laptop_backpack()
 
     # Verify the product details before adding it to the cart
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(product_page.product_price).to_have_text("$159.99")
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
+    expect(product_page.product_price).to_have_text("$49.99")
     expect(product_page.add_to_cart).to_be_visible()
 
     # Step 3: Add the product to the cart and verify its details
     product_page.add_to_cart_button()
     product_page.open_cart()
 
-    expect(cart_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(cart_page.product_price).to_have_text("$159.99")
+    expect(cart_page.product_name).to_have_text("Laptop Backpack")
+    expect(cart_page.product_price).to_have_text("$49.99")
     expect(cart_page.product_quantity).to_have_text("1")
 
     # Step 4: Proceed to checkout and enter shipping information

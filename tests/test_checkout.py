@@ -1,3 +1,4 @@
+
 import os
 
 from playwright.sync_api import expect
@@ -10,9 +11,11 @@ from pages.check_out_page import CheckOutPage
 
 
 def test_checkout_with_invalid_cardnumber(page):
-    # Ensure login credentials are configured
+    # Get login credentials from environment variables
     username = os.getenv("QA_USERNAME")
     password = os.getenv("QA_PASSWORD")
+
+    # Ensure both credentials are configured before running the test
     assert username and password, (
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
@@ -24,26 +27,29 @@ def test_checkout_with_invalid_cardnumber(page):
     cart_page = CartPage(page)
     check_out_page = CheckOutPage(page)
 
-    # Log in and verify successful navigation
+    # Step 1: Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Select the Bluetooth Speaker and verify its details
-    catalog_page.open_bluetooth_speaker()
-    expect(product_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(product_page.product_price).to_have_text("$159.99")
+    # Step 2: Open the in-stock Laptop Backpack product
+    catalog_page.open_laptop_backpack()
 
-    # Add the product to the cart and verify its contents
+    # Verify the product name and price
+    expect(product_page.product_name).to_have_text("Laptop Backpack")
+    expect(product_page.product_price).to_have_text("$49.99")
+
+    # Step 3: Add the product to the cart
     expect(product_page.add_to_cart).to_be_visible()
     product_page.add_to_cart_button()
     product_page.open_cart()
 
-    expect(cart_page.product_name).to_have_text("Bluetooth Speaker")
-    expect(cart_page.product_price).to_have_text("$159.99")
+    # Verify the product details and quantity in the cart
+    expect(cart_page.product_name).to_have_text("Laptop Backpack")
+    expect(cart_page.product_price).to_have_text("$49.99")
     expect(cart_page.product_quantity).to_have_text("1")
 
-    # Proceed to checkout and enter shipping information
+    # Step 4: Proceed to checkout and enter shipping information
     cart_page.checkout()
     check_out_page.shipping_info(
         "Omer",
@@ -51,7 +57,7 @@ def test_checkout_with_invalid_cardnumber(page):
         "Lumumbastr 21",
     )
 
-    # Submit an invalid card number to exercise payment validation
+    # Step 5: Enter an invalid card number to test payment validation
     check_out_page.payment_info(
         "1234 1234 1234 1234",
         "12/27",
@@ -60,19 +66,23 @@ def test_checkout_with_invalid_cardnumber(page):
     )
     check_out_page.place_order()
 
-    # Verify the error appears and no confirmation is visible
+    # Verify the invalid-card error is displayed
     expect(check_out_page.checkout_error).to_have_text(
         "Invalid card number. Please check and try again."
     )
+
+    # Verify that no order confirmation is displayed
     expect(
         page.get_by_test_id("order-confirmation-heading")
     ).not_to_be_visible()
 
 
 def test_checkout_with_missing_shipping_address(page):
-    # Ensure login credentials are configured
+    # Get login credentials from environment variables
     username = os.getenv("QA_USERNAME")
     password = os.getenv("QA_PASSWORD")
+
+    # Ensure both credentials are configured before running the test
     assert username and password, (
         "Set QA_USERNAME and QA_PASSWORD in the project .env file."
     )
@@ -84,20 +94,22 @@ def test_checkout_with_missing_shipping_address(page):
     cart_page = CartPage(page)
     check_out_page = CheckOutPage(page)
 
-    # Log in and verify successful navigation
+    # Step 1: Log in and verify successful navigation to the catalog
     login_page.open()
     login_page.login(username, password)
     expect(page).to_have_url("https://qademo.com/catalog")
 
-    # Add the Bluetooth Speaker to the cart
-    catalog_page.open_bluetooth_speaker()
+    # Step 2: Open the in-stock Laptop Backpack product
+    catalog_page.open_laptop_backpack()
+
+    # Add the product to the cart and open the cart
     product_page.add_to_cart_button()
     product_page.open_cart()
 
-    # Proceed to checkout
+    # Step 3: Proceed to checkout
     cart_page.checkout()
 
-    # Fill the other shipping fields but leave the address empty
+    # Fill in the first and last names, but leave the address empty
     check_out_page.first_name.fill("Omer")
     check_out_page.last_name.fill("Naeem")
 
@@ -109,11 +121,10 @@ def test_checkout_with_missing_shipping_address(page):
         "Omer Naeem",
     )
 
-    # Submit without a shipping address
+    # Submit the order without a shipping address
     check_out_page.place_order()
 
     # Verify that the required-address validation is displayed
     expect(check_out_page.address_error).to_have_text(
         "Address is required"
     )
-
