@@ -3,7 +3,7 @@ name: Playwright UI Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, test-failure-screenshot]
   pull_request:
     branches: [main]
 
