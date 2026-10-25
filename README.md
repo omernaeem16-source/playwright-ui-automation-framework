@@ -155,3 +155,5 @@ Latest complete test run:
 - Add CI/CD integration with GitHub Actions.
 - Expand test coverage where useful.
 - Embed failure screenshots directly in the HTML report.
+
+Learning GitHub Actions pull_request trigger.
