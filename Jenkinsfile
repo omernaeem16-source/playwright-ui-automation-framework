@@ -2,10 +2,6 @@
 pipeline {
     agent any
 
-    environment {
-        QA_USERNAME = credentials('qa-demo-credentials')
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -33,21 +29,15 @@ pipeline {
             }
         }
 
-        stage('Check Credentials') {
-            steps {
-                bat 'if defined QA_USERNAME (echo QA_USERNAME is set) else (echo QA_USERNAME is missing)'
-                bat 'if defined QA_USERNAME_PSW (echo QA_USERNAME_PSW is set) else (echo QA_USERNAME_PSW is missing)'
-                bat 'if defined QA_PASSWORD (echo QA_PASSWORD is set) else (echo QA_PASSWORD is missing)'
-            }
-        }
-
         stage('Run Playwright Tests') {
-            environment {
-                QA_PASSWORD = "${QA_USERNAME_PSW}"
-            }
-
             steps {
-                bat 'python -m pytest -v'
+                withCredentials([usernamePassword(
+                    credentialsId: 'qa-demo-credentials',
+                    usernameVariable: 'QA_USERNAME',
+                    passwordVariable: 'QA_PASSWORD'
+                )]) {
+                    bat 'python -m pytest -v'
+                }
             }
         }
     }
